@@ -20,7 +20,8 @@ namespace rStarDebugSheet.Scripts
 
     #region Private Variables
 
-        private readonly List<LabelModel> cells = new List<LabelModel>();
+        private readonly List<LabelModel> labelCells    = new List<LabelModel>();
+        private readonly List<LabelModel> searchResults = new List<LabelModel>();
 
     #endregion
 
@@ -44,19 +45,20 @@ namespace rStarDebugSheet.Scripts
             labelCellModel.CellTexts.Text = cellText;
             var index      = AddLabel(labelCellModel);
             var labelModel = new LabelModel(index , labelCellModel);
-            cells.Add(labelModel);
+            labelCells.Add(labelModel);
+            searchResults.Add(labelModel);
         }
 
         private void Init()
         {
             AddSearchField("type something" , OnSearchFieldChanged , _ => Debug.Log($"{_}"));
             AddLabel("Test1");
-            AddLabel("Test1");
-            AddButton("Reload" , clicked : ClearItems);
+            AddLabel("Test2");
         }
 
         private void OnSearchFieldChanged(string str)
         {
+            Debug.Log($"OnSearchFieldChanged: {str}");
             var reload = string.IsNullOrEmpty(str);
             if (reload)
             {
@@ -64,18 +66,23 @@ namespace rStarDebugSheet.Scripts
                 return;
             }
 
-            foreach (var labelCell in cells)
+            foreach (var labelCell in searchResults)
             {
                 var containStr       = labelCell.Text.Contains(str);
                 var notInFilterRange = containStr == false;
-                if (notInFilterRange) RemoveItem(labelCell.Index);
+                if (notInFilterRange)
+                {
+                    searchResults.Remove(labelCell);
+                    RemoveItem(labelCell.Index);
+                }
             }
         }
 
         private new void Reload()
         {
-            ClearItems();
-            Init();
+            foreach (var labelModel in labelCells) searchResults.Add(labelModel);
+
+            foreach (var searchResult in searchResults) AddLabel(searchResult.LabelCellModel);
         }
 
     #endregion
