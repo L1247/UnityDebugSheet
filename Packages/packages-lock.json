@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.rstartools.bookmarkeverything": {
+      "version": "https://github.com/L1247/bookmark-everything.git?path=BookmarkEverything/Assets/BookmarkEverything",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "362ac9259265e92c61ffbdaad827ff6be4de7cdc"
+    },
     "com.tayx.graphy": {
       "version": "https://github.com/Tayx94/graphy.git",
       "depth": 0,
