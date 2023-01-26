@@ -10,7 +10,7 @@ namespace rStarDebugSheet.Scripts
     {
     #region Public Variables
 
-        public int            Index          { get; }
+        public int            Index          { get; private set; }
         public LabelCellModel LabelCellModel { get; }
         public string         Text           => LabelCellModel.CellTexts.Text;
 
@@ -22,6 +22,15 @@ namespace rStarDebugSheet.Scripts
         {
             Index          = index;
             LabelCellModel = labelCellModel;
+        }
+
+    #endregion
+
+    #region Public Methods
+
+        public void SetIndx(int index)
+        {
+            Index = index;
         }
 
     #endregion
