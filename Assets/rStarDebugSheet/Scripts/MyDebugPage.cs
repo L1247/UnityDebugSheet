@@ -1,6 +1,7 @@
 #region
 
 using System.Collections;
+using System.Collections.Generic;
 using UnityDebugSheet.Runtime.Core.Scripts;
 using UnityDebugSheet.Runtime.Core.Scripts.DefaultImpl.Cells;
 using UnityEngine;
@@ -14,6 +15,12 @@ namespace rStarDebugSheet.Scripts
     #region Protected Variables
 
         protected override string Title => "MyDebugPage";
+
+    #endregion
+
+    #region Private Variables
+
+        private readonly List<LabelModel> cells = new List<LabelModel>();
 
     #endregion
 
@@ -31,35 +38,44 @@ namespace rStarDebugSheet.Scripts
 
     #region Private Methods
 
+        private void AddLabel(string cellText)
+        {
+            var labelCellModel = new LabelCellModel(false);
+            labelCellModel.CellTexts.Text = cellText;
+            var index      = AddLabel(labelCellModel);
+            var labelModel = new LabelModel(index , labelCellModel);
+            cells.Add(labelModel);
+        }
+
         private void Init()
         {
             AddSearchField("type something" , OnSearchFieldChanged , _ => Debug.Log($"{_}"));
             AddLabel("Test1");
-            AddLabel("Test2");
+            AddLabel("Test1");
             AddButton("Reload" , clicked : ClearItems);
         }
 
         private void OnSearchFieldChanged(string str)
         {
-            Debug.Log($"{str}");
             var reload = string.IsNullOrEmpty(str);
             if (reload)
             {
-                ClearItems();
-                Init();
+                Reload();
                 return;
             }
 
-            for (var index = 0 ; index < ItemInfos.Count ; index++)
+            foreach (var labelCell in cells)
             {
-                var itemInfo   = ItemInfos[index];
-                var isNotLabel = itemInfo.PrefabKey != "LabelCell";
-                if (isNotLabel) continue;
-
-                var labelCell  = (LabelCellModel)itemInfo.CellModel;
-                var containStr = labelCell.CellTexts.Text.Contains(str);
-                if (containStr == false) RemoveItem(index);
+                var containStr       = labelCell.Text.Contains(str);
+                var notInFilterRange = containStr == false;
+                if (notInFilterRange) RemoveItem(labelCell.Index);
             }
+        }
+
+        private new void Reload()
+        {
+            ClearItems();
+            Init();
         }
 
     #endregion
