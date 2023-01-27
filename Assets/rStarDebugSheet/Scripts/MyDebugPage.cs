@@ -19,8 +19,8 @@ namespace rStarDebugSheet.Scripts
 
     #region Private Variables
 
-        private readonly List<LabelModel> labelCells    = new List<LabelModel>();
-        private readonly List<LabelModel> searchResults = new List<LabelModel>();
+        private readonly List<ItemModel> labelCells    = new List<ItemModel>();
+        private readonly List<ItemModel> searchResults = new List<ItemModel>();
 
     #endregion
 
@@ -38,27 +38,27 @@ namespace rStarDebugSheet.Scripts
 
     #region Private Methods
 
-        private void AddLabel(string cellText)
+        private void AddButton(string cellText)
         {
-            var labelCellModel = new LabelCellModel(false);
-            labelCellModel.CellTexts.Text = cellText;
-            var index      = AddLabel(labelCellModel);
-            var labelModel = new LabelModel(index , labelCellModel);
+            var cellModel = new ButtonCellModel(false);
+            cellModel.CellTexts.Text = cellText;
+            var index      = AddButton(cellModel);
+            var labelModel = new ItemModel(index , cellModel);
             labelCells.Add(labelModel);
             searchResults.Add(labelModel);
         }
 
-        private void AddLabel(LabelModel labelModel)
+        private void AddButton(ItemModel itemModel)
         {
-            var index = AddLabel(labelModel.LabelCellModel);
-            labelModel.SetIndx(index);
+            var index = AddButton(itemModel.CellModel);
+            itemModel.SetIndex(index);
         }
 
         private void Init()
         {
             AddSearchField("type something" , OnSearchFieldChanged , OnSearchFieldChanged);
-            AddLabel("Test1");
-            AddLabel("Test2");
+            AddButton("Test1");
+            AddButton("Test2");
         }
 
         private void OnSearchFieldChanged(string str)
@@ -89,7 +89,7 @@ namespace rStarDebugSheet.Scripts
                 {
                     if (searchResults.Contains(labelModel)) continue;
                     searchResults.Add(labelModel);
-                    AddLabel(labelModel);
+                    AddButton(labelModel);
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace rStarDebugSheet.Scripts
             foreach (var searchResult in searchResults) RemoveItem(searchResult.Index);
             searchResults.Clear();
             foreach (var labelModel in labelCells) searchResults.Add(labelModel);
-            foreach (var searchResult in searchResults) AddLabel(searchResult);
+            foreach (var searchResult in searchResults) AddButton(searchResult);
         }
 
     #endregion
