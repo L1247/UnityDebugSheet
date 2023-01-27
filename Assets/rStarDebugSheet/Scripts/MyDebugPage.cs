@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using rStarDebugSheet.Scripts.CustomCell;
 using UnityDebugSheet.Runtime.Core.Scripts;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 #endregion
@@ -27,7 +28,7 @@ namespace rStarDebugSheet.Scripts
         private readonly List<ItemModel> models        = new List<ItemModel>();
         private readonly List<ItemModel> searchResults = new List<ItemModel>();
 
-        private bool bindButtonNavigation = true;
+        private bool initOfGameObject = true;
 
     #endregion
 
@@ -35,7 +36,8 @@ namespace rStarDebugSheet.Scripts
 
         public override IEnumerator Initialize()
         {
-            AddSearchField("type something" , OnSearchFieldChanged , OnSearchFieldChanged);
+            // EventSystem.current.SetSelectedGameObject(myDebugPage.gameObject);
+            // AddSearchField("type something" , OnSearchFieldChanged , OnSearchFieldChanged);
             AddButton("Test1" , () => Debug.Log("1"));
             AddButton("Test2" , () => Debug.Log("2"));
             AddButton("Test3" , () => Debug.Log("3"));
@@ -51,13 +53,14 @@ namespace rStarDebugSheet.Scripts
         protected override void LateUpdate()
         {
             base.LateUpdate();
-            if (bindButtonNavigation)
+            if (initOfGameObject)
             {
                 var buttonCells = GetComponentsInChildren<CustomButtonCell>();
+                EventSystem.current.SetSelectedGameObject(buttonCells[0].gameObject);
                 for (var index = 0 ; index < buttonCells.Length ; index++)
                 {
-                    var up   = buttonCells[index - 1].button;
-                    var down = buttonCells[index + 1].button;
+                    int upIndex;
+                    int downIndex;
 
                     var button      = buttonCells[index].button;
                     var buttonCount = buttonCells.Length;
@@ -65,19 +68,27 @@ namespace rStarDebugSheet.Scripts
                     var isLastCell  = index == buttonCount - 1;
                     if (isFirstCell)
                     {
-                        up   = buttonCells[buttonCount - 1].button;
-                        down = buttonCells[index + 1].button;
+                        upIndex   = buttonCount - 1;
+                        downIndex = index + 1;
                     }
                     else if (isLastCell)
                     {
-                        up   = buttonCells[index - 1].button;
-                        down = buttonCells[0].button;
+                        upIndex   = index - 1;
+                        downIndex = 0;
                     }
+                    else
+                    {
+                        upIndex   = index - 1;
+                        downIndex = index + 1;
+                    }
+
+                    var up   = buttonCells[upIndex].button;
+                    var down = buttonCells[downIndex].button;
 
                     button.navigation = new Navigation { mode = Navigation.Mode.Explicit , selectOnUp = up , selectOnDown = down };
                 }
 
-                bindButtonNavigation = false;
+                initOfGameObject = false;
             }
         }
 
@@ -89,6 +100,7 @@ namespace rStarDebugSheet.Scripts
         {
             var cellModel = new CustomButtonCellModel();
             cellModel.Text = cellText;
+            cellModel.Name = $"CustomButtonCellModel:{ItemInfos.Count}";
             if (clicked != null) cellModel.Clicked += clicked;
 
             var itemModel = new ItemModel(cellModel);
@@ -100,7 +112,6 @@ namespace rStarDebugSheet.Scripts
         private void AddCustomButton(ItemModel itemModel)
         {
             var id = AddItem(CustomButtonCellKey , itemModel.CellModel);
-            Debug.Log($"{id}");
             itemModel.SetId(id);
         }
 
