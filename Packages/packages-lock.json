@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "676e946897491b03a18ee1d54551f6813fbc43fa"
+      "hash": "85576c06c0cf5c1433cf9e8deca8a8ec62d1300e"
     },
     "com.tayx.graphy": {
       "version": "https://github.com/Tayx94/graphy.git",
