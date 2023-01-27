@@ -1,10 +1,11 @@
 #region
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using rStarDebugSheet.Scripts.CustomCell;
 using UnityDebugSheet.Runtime.Core.Scripts;
-using UnityDebugSheet.Runtime.Core.Scripts.DefaultImpl.Cells;
+using UnityEngine;
 
 #endregion
 
@@ -32,8 +33,8 @@ namespace rStarDebugSheet.Scripts
         public override IEnumerator Initialize()
         {
             AddSearchField("type something" , OnSearchFieldChanged , OnSearchFieldChanged);
-            AddButton("Test1");
-            AddButton("Test2");
+            AddButton("Test1" , () => Debug.Log("1"));
+            AddButton("Test2" , () => Debug.Log("2"));
 
             yield break;
         }
@@ -42,10 +43,12 @@ namespace rStarDebugSheet.Scripts
 
     #region Private Methods
 
-        private void AddButton(string cellText)
+        private void AddButton(string cellText , Action clicked = null)
         {
             var cellModel = new CustomButtonCellModel();
             cellModel.Text = cellText;
+            if (clicked != null) cellModel.Clicked += clicked;
+
             var itemModel = new ItemModel(cellModel);
             AddCustomButton(itemModel);
             models.Add(itemModel);
