@@ -11,13 +11,11 @@ namespace rStarDebugSheet.Scripts.CustomCell
 {
     public sealed class CustomButtonCell : Cell<CustomButtonCellModel>
     {
-    #region Private Variables
+    #region Public Variables
 
-        [SerializeField]
-        private Text text;
+        public Button button;
 
-        [SerializeField]
-        private Button button;
+        public Text text;
 
     #endregion
 
@@ -40,7 +38,9 @@ namespace rStarDebugSheet.Scripts.CustomCell
     {
     #region Public Variables
 
-        public Color  Color { get; set; } = Color.black;
+        public Button SelectOnUp { get; set; }
+
+        public Color  Color { get; } = Color.black;
         public string Text  { get; set; }
 
     #endregion

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using rStarDebugSheet.Scripts.CustomCell;
 using UnityDebugSheet.Runtime.Core.Scripts;
 using UnityEngine;
+using UnityEngine.UI;
 
 #endregion
 
@@ -26,6 +27,8 @@ namespace rStarDebugSheet.Scripts
         private readonly List<ItemModel> models        = new List<ItemModel>();
         private readonly List<ItemModel> searchResults = new List<ItemModel>();
 
+        private bool bindButtonNavigation = true;
+
     #endregion
 
     #region Public Methods
@@ -35,8 +38,47 @@ namespace rStarDebugSheet.Scripts
             AddSearchField("type something" , OnSearchFieldChanged , OnSearchFieldChanged);
             AddButton("Test1" , () => Debug.Log("1"));
             AddButton("Test2" , () => Debug.Log("2"));
+            AddButton("Test3" , () => Debug.Log("3"));
+            AddButton("Test4" , () => Debug.Log("4"));
 
             yield break;
+        }
+
+    #endregion
+
+    #region Protected Methods
+
+        protected override void LateUpdate()
+        {
+            base.LateUpdate();
+            if (bindButtonNavigation)
+            {
+                var buttonCells = GetComponentsInChildren<CustomButtonCell>();
+                for (var index = 0 ; index < buttonCells.Length ; index++)
+                {
+                    var up   = buttonCells[index - 1].button;
+                    var down = buttonCells[index + 1].button;
+
+                    var button      = buttonCells[index].button;
+                    var buttonCount = buttonCells.Length;
+                    var isFirstCell = index == 0;
+                    var isLastCell  = index == buttonCount - 1;
+                    if (isFirstCell)
+                    {
+                        up   = buttonCells[buttonCount - 1].button;
+                        down = buttonCells[index + 1].button;
+                    }
+                    else if (isLastCell)
+                    {
+                        up   = buttonCells[index - 1].button;
+                        down = buttonCells[0].button;
+                    }
+
+                    button.navigation = new Navigation { mode = Navigation.Mode.Explicit , selectOnUp = up , selectOnDown = down };
+                }
+
+                bindButtonNavigation = false;
+            }
         }
 
     #endregion
@@ -57,8 +99,9 @@ namespace rStarDebugSheet.Scripts
 
         private void AddCustomButton(ItemModel itemModel)
         {
-            var index = AddItem(CustomButtonCellKey , itemModel.CellModel);
-            itemModel.SetIndex(index);
+            var id = AddItem(CustomButtonCellKey , itemModel.CellModel);
+            Debug.Log($"{id}");
+            itemModel.SetId(id);
         }
 
         private void OnSearchFieldChanged(string str)
@@ -78,7 +121,7 @@ namespace rStarDebugSheet.Scripts
                 if (notInFilterRange)
                 {
                     searchResults.Remove(labelCell);
-                    RemoveItem(labelCell.Index);
+                    RemoveItem(labelCell.Id);
                 }
             }
 
@@ -96,7 +139,7 @@ namespace rStarDebugSheet.Scripts
 
         private new void Reload()
         {
-            foreach (var searchResult in searchResults) RemoveItem(searchResult.Index);
+            foreach (var searchResult in searchResults) RemoveItem(searchResult.Id);
             searchResults.Clear();
             foreach (var labelModel in models) searchResults.Add(labelModel);
             foreach (var searchResult in searchResults) AddCustomButton(searchResult);
