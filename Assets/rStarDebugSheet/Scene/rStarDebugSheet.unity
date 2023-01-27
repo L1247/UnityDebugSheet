@@ -415,6 +415,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6564643838517370663, guid: f8bd0f7712e6d1342b4002a8901b5fb2, type: 3}
+      propertyPath: _cellPrefabs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6564643838517370663, guid: f8bd0f7712e6d1342b4002a8901b5fb2, type: 3}
+      propertyPath: _cellPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 4961378262321040842, guid: 2f7730d0dbd9e324296052e887f1f35e, type: 3}
     - target: {fileID: 6564643838517370666, guid: f8bd0f7712e6d1342b4002a8901b5fb2, type: 3}
       propertyPath: m_Name
       value: DebugSheetCanvas

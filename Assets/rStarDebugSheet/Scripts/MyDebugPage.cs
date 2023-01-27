@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using rStarDebugSheet.Scripts.CustomCell;
 using UnityDebugSheet.Runtime.Core.Scripts;
 using UnityDebugSheet.Runtime.Core.Scripts.DefaultImpl.Cells;
 
@@ -19,7 +20,9 @@ namespace rStarDebugSheet.Scripts
 
     #region Private Variables
 
-        private readonly List<ItemModel> labelCells    = new List<ItemModel>();
+        private const string CustomButtonCellKey = "CustomButtonCell";
+
+        private readonly List<ItemModel> models        = new List<ItemModel>();
         private readonly List<ItemModel> searchResults = new List<ItemModel>();
 
     #endregion
@@ -28,8 +31,9 @@ namespace rStarDebugSheet.Scripts
 
         public override IEnumerator Initialize()
         {
-            // Add a button to this page.
-            Init();
+            AddSearchField("type something" , OnSearchFieldChanged , OnSearchFieldChanged);
+            AddButton("Test1");
+            AddButton("Test2");
 
             yield break;
         }
@@ -40,25 +44,18 @@ namespace rStarDebugSheet.Scripts
 
         private void AddButton(string cellText)
         {
-            var cellModel = new ButtonCellModel(false);
-            cellModel.CellTexts.Text = cellText;
-            var index      = AddButton(cellModel);
-            var labelModel = new ItemModel(index , cellModel);
-            labelCells.Add(labelModel);
-            searchResults.Add(labelModel);
+            var cellModel = new CustomButtonCellModel();
+            cellModel.Text = cellText;
+            var itemModel = new ItemModel(cellModel);
+            AddCustomButton(itemModel);
+            models.Add(itemModel);
+            searchResults.Add(itemModel);
         }
 
-        private void AddButton(ItemModel itemModel)
+        private void AddCustomButton(ItemModel itemModel)
         {
-            var index = AddButton(itemModel.CellModel);
+            var index = AddItem(CustomButtonCellKey , itemModel.CellModel);
             itemModel.SetIndex(index);
-        }
-
-        private void Init()
-        {
-            AddSearchField("type something" , OnSearchFieldChanged , OnSearchFieldChanged);
-            AddButton("Test1");
-            AddButton("Test2");
         }
 
         private void OnSearchFieldChanged(string str)
@@ -82,14 +79,14 @@ namespace rStarDebugSheet.Scripts
                 }
             }
 
-            foreach (var labelModel in labelCells)
+            foreach (var model in models)
             {
-                var containStr = labelModel.Text.Contains(str);
+                var containStr = model.Text.Contains(str);
                 if (containStr)
                 {
-                    if (searchResults.Contains(labelModel)) continue;
-                    searchResults.Add(labelModel);
-                    AddButton(labelModel);
+                    if (searchResults.Contains(model)) continue;
+                    searchResults.Add(model);
+                    AddCustomButton(model);
                 }
             }
         }
@@ -98,8 +95,8 @@ namespace rStarDebugSheet.Scripts
         {
             foreach (var searchResult in searchResults) RemoveItem(searchResult.Index);
             searchResults.Clear();
-            foreach (var labelModel in labelCells) searchResults.Add(labelModel);
-            foreach (var searchResult in searchResults) AddButton(searchResult);
+            foreach (var labelModel in models) searchResults.Add(labelModel);
+            foreach (var searchResult in searchResults) AddCustomButton(searchResult);
         }
 
     #endregion

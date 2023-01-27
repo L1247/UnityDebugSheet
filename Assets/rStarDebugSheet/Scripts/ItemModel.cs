@@ -1,5 +1,6 @@
 #region
 
+using rStarDebugSheet.Scripts.CustomCell;
 using UnityDebugSheet.Runtime.Core.Scripts.DefaultImpl.Cells;
 
 #endregion
@@ -10,19 +11,18 @@ namespace rStarDebugSheet.Scripts
     {
     #region Public Variables
 
-        public ButtonCellModel CellModel { get; }
+        public CustomButtonCellModel CellModel { get; }
 
         public int    Index { get; private set; }
-        public string Text  => CellModel.CellTexts.Text;
+        public string Text  => CellModel.Text;
 
     #endregion
 
     #region Constructor
 
-        public ItemModel(int index , ButtonCellModel labelCellModel)
+        public ItemModel(CustomButtonCellModel cellModel)
         {
-            Index     = index;
-            CellModel = labelCellModel;
+            CellModel = cellModel;
         }
 
     #endregion
